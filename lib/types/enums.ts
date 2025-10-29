@@ -1,0 +1,47 @@
+export enum RoleType {
+  ADMIN = 'ADMIN',
+  ADVOGADO = 'ADVOGADO',
+  CLIENTE = 'CLIENTE',
+}
+
+export enum TipoFluxo {
+  PPS = 'PPS',
+  REESTRUTURACAO = 'REESTRUTURACAO',
+  CONTRATOS = 'CONTRATOS',
+  MA = 'MA',
+}
+
+export enum StatusProjeto {
+  PENDENTE = 'PENDENTE',
+  EM_ANDAMENTO = 'EM_ANDAMENTO',
+  AGUARDANDO_CLIENTE = 'AGUARDANDO_CLIENTE',
+  CONCLUIDO = 'CONCLUIDO',
+  CANCELADO = 'CANCELADO',
+}
+
+export enum StatusEtapa {
+  PENDENTE = 'PENDENTE',
+  EM_ANDAMENTO = 'EM_ANDAMENTO',
+  CONCLUIDA = 'CONCLUIDA',
+  BLOQUEADA = 'BLOQUEADA',
+}
+
+export enum ClienteStatus {
+  ATIVO = 'ATIVO',
+  INATIVO = 'INATIVO',
+  BLOQUEADO = 'BLOQUEADO',
+}
+
+export enum TipoDocumento {
+  CONTRATO = 'CONTRATO',
+  PROCURACAO = 'PROCURACAO',
+  PETICAO = 'PETICAO',
+  SENTENCA = 'SENTENCA',
+  COMPROVANTE = 'COMPROVANTE',
+  OUTRO = 'OUTRO',
+}
+
+export enum AtividadeStatus {
+  VISIVEL_CLIENTE = 'VISIVEL_CLIENTE',
+  INTERNA = 'INTERNA',
+}
