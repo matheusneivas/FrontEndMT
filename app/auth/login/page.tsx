@@ -49,12 +49,14 @@ export default function LoginPage() {
       const result = await login(data.email, data.senha);
       console.log('🔵 Resultado do login:', result);
 
-      if (result.success) {
+      if (result && result.success) {
         console.log('✅ Login bem-sucedido!');
+        // Pequeno delay para garantir que a sessão foi criada
+        await new Promise((resolve) => setTimeout(resolve, 500));
         // Redirect to dashboard
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       } else {
-        console.log('❌ Login falhou:', result.error);
+        console.log('❌ Login falhou:', result?.error);
         setError('Email ou senha inválidos');
       }
     } catch (err: any) {

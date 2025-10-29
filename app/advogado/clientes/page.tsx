@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { clientesApi } from '@/lib/api';
+import { ClienteStatus } from '@/lib/types';
 import { clienteStatusLabels, clienteStatusColors, formatCPF, formatCNPJ, formatPhone } from '@/lib/utils/formatters';
 import { UserCircle, Plus, Search, Mail, Phone, FileText, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
@@ -16,12 +17,12 @@ export default function ClientesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage] = useState(1);
 
-  const { data: clientesData, isLoading } = useQuery({
+  const { data: clientesData, isLoading, error } = useQuery({
     queryKey: ['clientes', currentPage, searchTerm],
     queryFn: () => clientesApi.getAll(currentPage, 50, searchTerm ? { search: searchTerm } : undefined),
   });
 
-  const clientes = clientesData?.data || [];
+  const clientes = Array.isArray(clientesData?.data) ? clientesData.data : [];
 
   if (isLoading) {
     return (
@@ -103,7 +104,9 @@ export default function ClientesPage() {
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {clientes.map((cliente) => {
-              const statusColor = clienteStatusColors[cliente.status];
+              // Backend may not return status, default to ATIVO
+              const status = cliente.status || ClienteStatus.ATIVO;
+              const statusColor = clienteStatusColors[status];
               return (
                 <Card key={cliente.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
@@ -121,7 +124,7 @@ export default function ClientesPage() {
                         variant="outline"
                         className={`${statusColor.bg} ${statusColor.text} ${statusColor.border} shrink-0`}
                       >
-                        {clienteStatusLabels[cliente.status]}
+                        {clienteStatusLabels[status]}
                       </Badge>
                     </div>
                   </CardHeader>

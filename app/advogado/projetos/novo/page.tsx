@@ -55,6 +55,8 @@ export default function NovoProjetoPage() {
     queryFn: () => clientesApi.getAll(1, 100),
   });
 
+  const clientes = Array.isArray(clientesData?.data) ? clientesData.data : [];
+
   const mutation = useMutation({
     mutationFn: (data: FormValues) => projetosApi.create(data),
     onSuccess: (projeto) => {
@@ -191,7 +193,7 @@ export default function NovoProjetoPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {clientesData?.data.map((cliente) => (
+                        {clientes.map((cliente) => (
                           <SelectItem key={cliente.id} value={cliente.id}>
                             {cliente.nome}
                           </SelectItem>

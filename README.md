@@ -289,6 +289,25 @@ NEXTAUTH_SECRET=your-secret-key-here
 NODE_ENV=development
 ```
 
+## 🔑 Credenciais de Teste
+
+Usuários disponíveis para login (após executar seed no backend):
+
+### 👤 Admin
+- **Email:** admin@michiletavares.com.br
+- **Senha:** Admin@2024!Secure
+- **Acesso:** Total ao sistema
+
+### 👤 Advogado
+- **Email:** advogado@michiletavares.com.br
+- **Senha:** Advogado@2024!MT
+- **Acesso:** Gestão de clientes, projetos e etapas
+
+### 👤 Cliente
+- **Email:** cliente@michiletavares.com.br
+- **Senha:** Cliente@2024!Test
+- **Acesso:** Visualização dos próprios projetos
+
 ## Features Implementadas
 
 ### Autenticação

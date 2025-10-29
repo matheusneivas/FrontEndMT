@@ -23,25 +23,34 @@ export const projetosApi = {
       ...(filters?.search && { search: filters.search }),
     });
 
-    const response = await apiClient.get<PaginatedResponse<Projeto>>(
+    // Backend wraps response in { data: { data: [], meta: {} }, timestamp, path }
+    const response = await apiClient.get<{ data: { data: Projeto[]; meta: any } }>(
       `/projetos?${params.toString()}`
     );
-    return response.data;
+
+    // Transform backend response to match PaginatedResponse type
+    return {
+      data: response.data.data.data,
+      total: response.data.data.meta.total,
+      page: response.data.data.meta.page,
+      limit: response.data.data.meta.limit,
+      totalPages: response.data.data.meta.totalPages,
+    };
   },
 
   getById: async (id: string): Promise<Projeto> => {
-    const response = await apiClient.get<Projeto>(`/projetos/${id}`);
-    return response.data;
+    const response = await apiClient.get<{ data: Projeto }>(`/projetos/${id}`);
+    return response.data.data;
   },
 
   create: async (data: CreateProjetoRequest): Promise<Projeto> => {
-    const response = await apiClient.post<Projeto>('/projetos', data);
-    return response.data;
+    const response = await apiClient.post<{ data: Projeto }>('/projetos', data);
+    return response.data.data;
   },
 
   update: async (id: string, data: UpdateProjetoRequest): Promise<Projeto> => {
-    const response = await apiClient.patch<Projeto>(`/projetos/${id}`, data);
-    return response.data;
+    const response = await apiClient.patch<{ data: Projeto }>(`/projetos/${id}`, data);
+    return response.data.data;
   },
 
   delete: async (id: string): Promise<void> => {
@@ -49,8 +58,8 @@ export const projetosApi = {
   },
 
   getMeusProjetos: async (): Promise<Projeto[]> => {
-    const response = await apiClient.get<Projeto[]>('/projetos/meus');
-    return response.data;
+    const response = await apiClient.get<{ data: Projeto[] }>('/projetos/meus');
+    return response.data.data;
   },
 };
 

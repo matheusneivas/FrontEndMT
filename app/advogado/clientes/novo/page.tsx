@@ -50,26 +50,47 @@ export default function NovoClientePage() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (data: FormValues) => clientesApi.create(data),
+    mutationFn: (data: any) => clientesApi.create(data),
     onSuccess: () => {
       toast.success('Cliente criado com sucesso!');
       queryClient.invalidateQueries({ queryKey: ['clientes'] });
       router.push('/advogado/clientes');
     },
-    onError: () => {
-      toast.error('Erro ao criar cliente');
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || 'Erro ao criar cliente';
+      console.error('Erro ao criar cliente:', error?.response?.data);
+      toast.error(errorMessage);
     },
   });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      nome: '',
+      email: '',
+      telefone: '',
+      cpf: '',
+      cnpj: '',
+      endereco: '',
       status: ClienteStatus.ATIVO,
+      observacoes: '',
     },
   });
 
   const onSubmit = async (values: FormValues) => {
-    await mutation.mutateAsync(values);
+    // Transformar CPF ou CNPJ em 'documento' para o backend
+    const payload = {
+      nome: values.nome,
+      email: values.email,
+      telefone: values.telefone,
+      endereco: values.endereco,
+      // Usar CPF ou CNPJ como documento (priorizar CNPJ se ambos preenchidos)
+      documento: values.cnpj || values.cpf || undefined,
+      // Backend não aceita status e observacoes no create
+    };
+
+    console.log('Payload enviado:', payload);
+    await mutation.mutateAsync(payload as any);
   };
 
   return (
