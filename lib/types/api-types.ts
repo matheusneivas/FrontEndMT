@@ -36,6 +36,27 @@ export interface RegisterRequest {
   role: RoleType;
 }
 
+export interface ValidarTokenResponse {
+  valido: boolean;
+  cliente?: {
+    id: string;
+    nome: string;
+    email: string;
+  };
+  motivo?: string;
+}
+
+export interface CriarSenhaRequest {
+  token: string;
+  senha: string;
+  confirmarSenha: string;
+}
+
+export interface CriarSenhaResponse {
+  success: boolean;
+  message: string;
+}
+
 // Cliente types
 export interface Cliente {
   id: string;
@@ -70,20 +91,20 @@ export interface UpdateClienteRequest extends Partial<CreateClienteRequest> {}
 // Projeto types
 export interface Projeto {
   id: string;
-  titulo: string;
-  descricao?: string;
-  tipo_fluxo: TipoFluxo;
-  status: StatusProjeto;
+  tipoFluxo: TipoFluxo;
+  status: string;
   clienteId: string;
   cliente?: Cliente;
-  advogadoId: string;
-  advogado?: User;
+  responsavelId?: string;
+  responsavel?: User;
   etapas?: Etapa[];
   documentos?: Documento[];
   atividades?: Atividade[];
   dataInicio?: string;
-  dataPrevisao?: string;
+  dataPrevisaoConclusao?: string;
   dataConclusao?: string;
+  estrategiaDefinida?: string;
+  observacoes?: string;
   createdAt: string;
   updatedAt: string;
 }

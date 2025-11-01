@@ -28,6 +28,8 @@ export function Sidebar() {
 
   const adminLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
+    { href: '/advogado/clientes', label: 'Clientes', icon: UserCircle },
+    { href: '/advogado/projetos', label: 'Projetos', icon: Briefcase },
     { href: '/admin/users', label: 'Usuários', icon: Users },
     { href: '/admin/config', label: 'Configurações', icon: Settings },
   ];

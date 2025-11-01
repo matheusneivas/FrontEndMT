@@ -5,6 +5,7 @@ import { RoleType } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Briefcase, FileText, CheckCircle2, Clock, TrendingUp } from 'lucide-react';
 import { PageLoading } from '@/components/common/loading';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const { user, perfil, isLoading } = useAuth();
@@ -42,49 +43,57 @@ export default function DashboardPage() {
       {/* Admin Dashboard */}
       {perfil === RoleType.ADMIN && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{adminMetrics.totalUsers}</div>
-              <p className="text-xs text-muted-foreground">+2 este mês</p>
-            </CardContent>
-          </Card>
+          <Link href="/admin/users">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{adminMetrics.totalUsers}</div>
+                <p className="text-xs text-muted-foreground">+2 este mês</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{adminMetrics.totalClientes}</div>
-              <p className="text-xs text-muted-foreground">+3 este mês</p>
-            </CardContent>
-          </Card>
+          <Link href="/advogado/clientes">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{adminMetrics.totalClientes}</div>
+                <p className="text-xs text-muted-foreground">+3 este mês</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Projetos Ativos</CardTitle>
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{adminMetrics.projetosAtivos}</div>
-              <p className="text-xs text-muted-foreground">62% do total</p>
-            </CardContent>
-          </Card>
+          <Link href="/advogado/projetos">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Projetos Ativos</CardTitle>
+                <Briefcase className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{adminMetrics.projetosAtivos}</div>
+                <p className="text-xs text-muted-foreground">62% do total</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Concluídos</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{adminMetrics.projetosConcluidos}</div>
-              <p className="text-xs text-muted-foreground">+5 este mês</p>
-            </CardContent>
-          </Card>
+          <Link href="/advogado/projetos">
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Concluídos</CardTitle>
+                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{adminMetrics.projetosConcluidos}</div>
+                <p className="text-xs text-muted-foreground">+5 este mês</p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       )}
 

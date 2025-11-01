@@ -32,14 +32,15 @@ import { tipoFluxoLabels } from '@/lib/utils/formatters';
 import { ArrowLeft, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 const formSchema = z.object({
-  titulo: z.string().min(3, 'Título deve ter no mínimo 3 caracteres'),
-  descricao: z.string().optional(),
   tipo_fluxo: z.nativeEnum(TipoFluxo, {
     required_error: 'Selecione o tipo de fluxo',
   }),
   clienteId: z.string().min(1, 'Selecione um cliente'),
+  estrategiaDefinida: z.string().optional(),
+  observacoes: z.string().optional(),
   dataInicio: z.string().optional(),
   dataPrevisao: z.string().optional(),
 });
@@ -49,6 +50,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function NovoProjetoPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { data: clientesData, isLoading: loadingClientes } = useQuery({
     queryKey: ['clientes', 'all'],
@@ -62,22 +64,39 @@ export default function NovoProjetoPage() {
     onSuccess: (projeto) => {
       toast.success('Projeto criado com sucesso!');
       queryClient.invalidateQueries({ queryKey: ['projetos'] });
-      router.push(`/advogado/projetos/${projeto.id}`);
+      router.push('/advogado/projetos');
     },
-    onError: () => {
-      toast.error('Erro ao criar projeto');
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || 'Erro ao criar projeto';
+      toast.error(Array.isArray(errorMessage) ? errorMessage[0] : errorMessage);
     },
   });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      tipo_fluxo: undefined,
+      clienteId: '',
+      estrategiaDefinida: '',
+      observacoes: '',
       dataInicio: format(new Date(), 'yyyy-MM-dd'),
+      dataPrevisao: '',
     },
   });
 
   const onSubmit = async (values: FormValues) => {
-    await mutation.mutateAsync(values);
+    // Remove campos vazios/undefined antes de enviar
+    const cleanedData = Object.fromEntries(
+      Object.entries(values).filter(([_, value]) => value !== '' && value !== undefined)
+    ) as FormValues;
+
+    // Adicionar o ID do usuário logado como responsável do projeto
+    const dataToSend = {
+      ...cleanedData,
+      advogadoId: user?.id, // Será convertido para responsavelId na API
+    };
+
+    await mutation.mutateAsync(dataToSend);
   };
 
   return (
@@ -111,15 +130,15 @@ export default function NovoProjetoPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="titulo"
+                name="estrategiaDefinida"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Título *</FormLabel>
+                    <FormLabel>Estratégia Definida</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Estruturação societária Empresa X" {...field} />
+                      <Input placeholder="Ex: Reestruturação societária com foco em planejamento sucessório" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Nome identificador do projeto
+                      Descrição da estratégia do projeto
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -128,13 +147,13 @@ export default function NovoProjetoPage() {
 
               <FormField
                 control={form.control}
-                name="descricao"
+                name="observacoes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Descrição</FormLabel>
+                    <FormLabel>Observações</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Descreva os objetivos e escopo do projeto..."
+                        placeholder="Observações gerais sobre o projeto..."
                         rows={4}
                         {...field}
                       />
@@ -150,7 +169,7 @@ export default function NovoProjetoPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Fluxo *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o tipo de fluxo" />
@@ -180,7 +199,7 @@ export default function NovoProjetoPage() {
                     <FormLabel>Cliente *</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                       disabled={loadingClientes}
                     >
                       <FormControl>
@@ -228,7 +247,7 @@ export default function NovoProjetoPage() {
                   name="dataPrevisao"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Previsão de Conclusão</FormLabel>
+                      <FormLabel>Data Prevista de Conclusão</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>

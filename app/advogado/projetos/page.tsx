@@ -20,14 +20,17 @@ import { useState } from 'react';
 export default function ProjetosPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: projetos, isLoading } = useQuery({
-    queryKey: ['projetos', 'meus'],
-    queryFn: () => projetosApi.getMeusProjetos(),
+  const { data: projetosData, isLoading, error } = useQuery({
+    queryKey: ['projetos', 'list'],
+    queryFn: () => projetosApi.getAll(1, 100),
   });
 
+  const projetos = projetosData?.data || [];
+
   const filteredProjetos = projetos?.filter((projeto) =>
-    projeto.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    projeto.cliente?.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    projeto.estrategiaDefinida?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    projeto.cliente?.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    projeto.tipoFluxo?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) {
@@ -110,22 +113,24 @@ export default function ProjetosPage() {
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjetos.map((projeto) => {
-              const statusColor = projetoStatusColors[projeto.status];
+              const statusColor = projetoStatusColors[projeto.status] || { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-300' };
               return (
                 <Link key={projeto.id} href={`/advogado/projetos/${projeto.id}`}>
                   <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
                     <CardHeader>
                       <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="line-clamp-2">{projeto.titulo}</CardTitle>
+                        <CardTitle className="line-clamp-2">
+                          {projeto.estrategiaDefinida || `Projeto ${tipoFluxoLabels[projeto.tipoFluxo]}`}
+                        </CardTitle>
                         <Badge
                           variant="outline"
                           className={`${statusColor.bg} ${statusColor.text} ${statusColor.border} shrink-0`}
                         >
-                          {projetoStatusLabels[projeto.status]}
+                          {projetoStatusLabels[projeto.status] || projeto.status}
                         </Badge>
                       </div>
                       <CardDescription className="line-clamp-2">
-                        {projeto.descricao || 'Sem descrição'}
+                        {projeto.observacoes || 'Sem observações'}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -133,7 +138,7 @@ export default function ProjetosPage() {
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Tipo:</span>
                           <Badge variant="secondary">
-                            {tipoFluxoLabels[projeto.tipo_fluxo]}
+                            {tipoFluxoLabels[projeto.tipoFluxo]}
                           </Badge>
                         </div>
 
